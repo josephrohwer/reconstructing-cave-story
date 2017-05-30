@@ -1,5 +1,9 @@
-﻿  Game.cpp
-c:\users\joseph.rohwer\joseph\repositories\gamedevelopment\remakingcavestory\remakingcavestory\game.cpp(55): warning C4244: 'initializing': conversion from 'double' to 'float', possible loss of data
-c:\users\joseph.rohwer\joseph\repositories\gamedevelopment\remakingcavestory\remakingcavestory\game.cpp(55): warning C4244: 'initializing': conversion from 'double' to 'const float', possible loss of data
+﻿  Graphics.cpp
+  Game.cpp
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  main.cpp
+  Sprite.cpp
+  AnimatedSprite.cpp
   RemakingCaveStory.vcxproj -> C:\Users\joseph.rohwer\Joseph\Repositories\GameDevelopment\RemakingCaveStory\Debug\RemakingCaveStory.exe
   RemakingCaveStory.vcxproj -> C:\Users\joseph.rohwer\Joseph\Repositories\GameDevelopment\RemakingCaveStory\Debug\RemakingCaveStory.pdb (Partial PDB)

@@ -2,20 +2,23 @@
 #ifndef GAME_H_
 #define GAME_H_
 
-//Forward declaration
-struct SDL_Window;
-struct SDL_Renderer;
+#include <SDL.h>
+#include <boost/scoped_ptr.hpp>
+#include "Graphics.h"
+
+class Sprite;
+class Graphics;
 
 class Game {
 private:
-	SDL_Window* window_;
-	SDL_Renderer* renderer_;
+	boost::scoped_ptr<Sprite> sprite_;
 	void eventLoop();
-	void update();
-	void draw();
+	void update(int elapsed_time_ms);
+	void draw(Graphics& graphics);
 public:
 	Game();
 	~Game();
+	static int kTileSize;
 };
 
 #endif // !GAME_H_
