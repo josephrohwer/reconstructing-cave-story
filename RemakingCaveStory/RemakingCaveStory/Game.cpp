@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include "Game.h"
 #include "AnimatedSprite.h"
+#include "Input.h"
 
 // An anonymous namespace. Can only be accessed within this file.
 namespace {
@@ -22,9 +23,11 @@ Game::~Game() {
 
 void Game::eventLoop() {
 	Graphics graphics; // Creates the window and renderer.
+	Input input; // Key events.
 	SDL_Event event; // A union that contains structures for the different event types.
 	sprite_.reset(new AnimatedSprite(graphics, "MyChar", 0, 0, kTileSize, kTileSize, 15, 3));
 	int last_update_time = SDL_GetTicks();
+	input.beginNewFrame();
 	bool running = true;
 	// This loop runs however many times kFps is set to per second. In this case 60 times per second.
 	while (running) {
@@ -33,14 +36,20 @@ void Game::eventLoop() {
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 			case SDL_KEYDOWN:
-				if (event.key.keysym.sym == SDLK_ESCAPE) {
-					running = false;
-				}
+				input.keyDownEvent(event);
+				break;
+			case SDL_KEYUP:
+				input.keyUpEvent(event);
 				break;
 			default:
 				break;
 			}
 		}
+
+		if (input.wasKeyPressed(SDLK_ESCAPE)) {
+			running = false;
+		}
+
 		const int current_time_ms = SDL_GetTicks();
 		update(current_time_ms - last_update_time);
 		last_update_time = current_time_ms;
