@@ -1,6 +1,21 @@
 # Visual Studio 2015 user specific files
 .vs/
 
+# Debug files
+*.pdb
+*.idb
+
+# Linker files
+*.ilk
+
+# Log files
+*.log
+*.tlog
+*.lastbuildstate
+
+# Sprite files
+*.bmp
+
 # Compiled Object files
 *.slo
 *.lo
