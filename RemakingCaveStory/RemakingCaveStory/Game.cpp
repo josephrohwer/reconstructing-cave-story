@@ -1,14 +1,16 @@
 #include <stdio.h>
 #include "Game.h"
-#include "AnimatedSprite.h"
+#include "Graphics.h"
+#include "Player.h"
 #include "Input.h"
+#include "AnimatedSprite.h"
 
 // An anonymous namespace. Can only be accessed within this file.
 namespace {
 	const int kFps = 60;
 }
 
-//STATIC
+//STATIC : ONLY ONE COPY OF THIS IS EVER MADE, NO MATTER HOW MANY OBJECTS ARE CREATED.
 int Game::kTileSize = 32;
 
 Game::Game() {
@@ -18,16 +20,16 @@ Game::Game() {
 }
 
 Game::~Game() {
-	SDL_Quit(); // Clean up all initialized subsystems. You should call it upon all exit conditions.
+	SDL_Quit(); // Clean up all initialized subsystems. Call it upon all exit conditions.
 }
 
 void Game::eventLoop() {
 	Graphics graphics; // Creates the window and renderer.
 	Input input; // Key events.
 	SDL_Event event; // A union that contains structures for the different event types.
-	sprite_.reset(new AnimatedSprite(graphics, "MyChar", 0, 0, kTileSize, kTileSize, 15, 3));
+	player_.reset(new Player(graphics, 320, 240));
 	int last_update_time = SDL_GetTicks();
-	input.beginNewFrame();
+	input.beginNewFrame(); // Clears pressed and released keys from the map.
 	bool running = true;
 	// This loop runs however many times kFps is set to per second. In this case 60 times per second.
 	while (running) {
@@ -48,6 +50,19 @@ void Game::eventLoop() {
 
 		if (input.wasKeyPressed(SDLK_ESCAPE)) {
 			running = false;
+		}
+
+		if (input.isKeyHeld(SDLK_LEFT) && input.isKeyHeld(SDLK_RIGHT)) {
+			player_->stopMoving();
+		}
+		else if (input.isKeyHeld(SDLK_LEFT)) {
+			player_->startMovingLeft();
+		}
+		else if (input.isKeyHeld(SDLK_RIGHT)) {
+			player_->startMovingRight();
+		}
+		else {
+			player_->stopMoving();
 		}
 
 		const int current_time_ms = SDL_GetTicks();
@@ -72,12 +87,12 @@ void Game::eventLoop() {
 
 // Move the player, move projecticles, and check collisions.
 void Game::update(int elapsed_time_ms) {
-	sprite_->update(elapsed_time_ms);
+	player_->update(elapsed_time_ms);
 }
 
 // Draw everything to the screen.
 void Game::draw(Graphics& graphics) {
 	graphics.clear();
-	sprite_->draw(graphics, 320, 240);
+	player_->draw(graphics);
 	graphics.flip();
 }

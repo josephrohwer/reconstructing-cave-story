@@ -4,14 +4,13 @@
 
 #include <SDL.h>
 #include <boost/scoped_ptr.hpp>
-#include "Graphics.h"
 
-class Sprite;
+class Player;
 class Graphics;
 
 class Game {
 private:
-	boost::scoped_ptr<Sprite> sprite_;
+	boost::scoped_ptr<Player> player_;
 	void eventLoop();
 	void update(int elapsed_time_ms);
 	void draw(Graphics& graphics);

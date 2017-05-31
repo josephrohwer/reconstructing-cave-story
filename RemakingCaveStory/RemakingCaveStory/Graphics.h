@@ -4,11 +4,13 @@
 
 #include <SDL.h>
 #include <map>
+#include <string>
 
 struct SDL_Window;
 struct SDL_Renderer;
 struct SDL_Texture;
 
+//THIS CLASS SHOULD HANDLE ALL CREATION AND DELETION WITH MEMORY OBJECTS.
 class Graphics {
 private:
 	SDL_Window* window_;

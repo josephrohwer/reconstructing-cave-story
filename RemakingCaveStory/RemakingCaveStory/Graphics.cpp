@@ -10,11 +10,15 @@ Graphics::Graphics() {
 	window_ = SDL_CreateWindow("Cave Story",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		kScreenWidth, kScreenHeight, 0);
+		kScreenWidth, kScreenHeight, SDL_WINDOW_RESIZABLE);
 	renderer_ = SDL_CreateRenderer(window_, -1, 0);
+	SDL_RenderSetLogicalSize(renderer_, kScreenWidth, kScreenHeight);
 }
 
 Graphics::~Graphics() {
+	for (SpriteMap::iterator it = sprite_sheets_.begin(); it != sprite_sheets_.end(); it++) {
+		SDL_DestroyTexture(it->second);
+	}
 	SDL_DestroyRenderer(renderer_);
 	SDL_DestroyWindow(window_);
 }

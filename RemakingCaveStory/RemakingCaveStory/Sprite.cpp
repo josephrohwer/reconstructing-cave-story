@@ -1,4 +1,5 @@
 #include "Sprite.h"
+#include "Graphics.h"
 
 Sprite::Sprite(Graphics& graphics, 
 	const std::string& file_name,
@@ -10,10 +11,6 @@ Sprite::Sprite(Graphics& graphics,
 	source_rect_.y = source_y;
 	source_rect_.w = width;
 	source_rect_.h = height;
-}
-
-Sprite::~Sprite() {
-	SDL_DestroyTexture(sprite_sheet_);
 }
 
 void Sprite::draw(Graphics& graphics, int x, int y) {

@@ -4,7 +4,6 @@
 
 #include <SDL.h>
 #include <string>
-#include "Graphics.h"
 
 class Graphics;
 
@@ -18,7 +17,6 @@ public:
 		const std::string& file_name,
 		int source_x, int source_y, 
 		int width, int height);
-	virtual ~Sprite();
 	virtual void update(int /*elapsed_time_ms*/) {} // Don't give parameter name because it gives unused variable warning.
 	void draw(Graphics& graphics, int x, int y);
 };
