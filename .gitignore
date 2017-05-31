@@ -16,6 +16,9 @@
 # Sprite files
 *.bmp
 
+# Notes
+*.txt
+
 # Compiled Object files
 *.slo
 *.lo
