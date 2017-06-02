@@ -4,6 +4,7 @@
 #include "Player.h"
 #include "Input.h"
 #include "AnimatedSprite.h"
+#include "Map.h"
 
 // An anonymous namespace. Can only be accessed within this file.
 namespace {
@@ -27,6 +28,7 @@ void Game::eventLoop() {
 	Input input; // Key events.
 	SDL_Event event; // A union that contains structures for the different event types.
 	player_.reset(new Player(graphics, 320, 240)); // Resets what player_ is pointing to, copy-and-swap.
+	map_.reset(Map::createTestMap(graphics));
 	int last_update_time = SDL_GetTicks();
 	
 	// This loop runs however many times kFps is set to per second. In this case 60 times per second.
@@ -111,12 +113,14 @@ void Game::eventLoop() {
 
 // Move the player, move projecticles, and check collisions.
 void Game::update(int elapsed_time_ms) {
-	player_->update(elapsed_time_ms);
+	player_->update(elapsed_time_ms, *map_);
+	map_->update(elapsed_time_ms);
 }
 
 // Draw everything to the screen.
 void Game::draw(Graphics& graphics) {
 	graphics.clear();
 	player_->draw(graphics);
+	map_->draw(graphics);
 	graphics.flip();
 }

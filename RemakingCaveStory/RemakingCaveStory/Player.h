@@ -4,9 +4,11 @@
 
 #include <boost/shared_ptr.hpp>
 #include <map>
+#include "Rectangle.h"
 
 class Sprite;
 class Graphics;
+class Map;
 
 class Player {
 private:
@@ -64,6 +66,15 @@ private:
 	void initializeSprites(Graphics& graphics);
 	void initializeSprite(Graphics& graphics, const SpriteState& sprite);
 	SpriteState getSpriteState();
+
+	Rectangle leftCollision(int delta) const;
+	Rectangle rightCollision(int delta) const;
+	Rectangle topCollision(int delta) const;
+	Rectangle bottomCollision(int delta) const;
+
+	void updateX(int elapsed_time_ms, const Map& map);
+	void updateY(int elapsed_time_ms, const Map& map);
+
 	bool on_ground() const { return on_ground_; }
 	std::map<SpriteState, boost::shared_ptr<Sprite>> sprites_;
 	int x_;
@@ -77,7 +88,7 @@ private:
 	Jump jump_;
 public:
 	Player(Graphics& graphics, int x, int y);
-	void update(int elapsed_time_ms);
+	void update(int elapsed_time_ms, const Map& map);
 	void draw(Graphics& graphics);
 
 	void startMovingLeft();

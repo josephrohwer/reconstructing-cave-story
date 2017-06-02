@@ -12,8 +12,8 @@ Graphics::Graphics() {
 		SDL_WINDOWPOS_UNDEFINED,
 		kScreenWidth, kScreenHeight, SDL_WINDOW_RESIZABLE);
 	renderer_ = SDL_CreateRenderer(window_, -1, 0);
-	SDL_ShowCursor(SDL_DISABLE);
 	SDL_RenderSetLogicalSize(renderer_, kScreenWidth, kScreenHeight);
+	SDL_ShowCursor(SDL_DISABLE);
 }
 
 Graphics::~Graphics() {

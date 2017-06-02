@@ -7,10 +7,12 @@
 
 class Player;
 class Graphics;
+class Map;
 
 class Game {
 private:
 	boost::scoped_ptr<Player> player_;
+	boost::scoped_ptr<Map> map_;
 	void eventLoop();
 	void update(int elapsed_time_ms);
 	void draw(Graphics& graphics);
