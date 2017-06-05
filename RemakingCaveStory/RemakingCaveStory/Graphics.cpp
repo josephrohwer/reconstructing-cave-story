@@ -1,18 +1,14 @@
 #include <string>
 #include "Graphics.h"
-
-namespace {
-	const int kScreenWidth = 640;
-	const int kScreenHeight = 480;
-}
+#include "Game.h"
 
 Graphics::Graphics() {
 	window_ = SDL_CreateWindow("Cave Story",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		kScreenWidth, kScreenHeight, SDL_WINDOW_RESIZABLE);
+		Game::kScreenWidth, Game::kScreenHeight, SDL_WINDOW_RESIZABLE);
 	renderer_ = SDL_CreateRenderer(window_, -1, 0);
-	SDL_RenderSetLogicalSize(renderer_, kScreenWidth, kScreenHeight);
+	SDL_RenderSetLogicalSize(renderer_, Game::kScreenWidth, Game::kScreenHeight);
 	SDL_ShowCursor(SDL_DISABLE);
 }
 

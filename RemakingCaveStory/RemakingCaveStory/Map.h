@@ -3,7 +3,10 @@
 #define MAP_H_
 
 #include <vector>
+#include <boost/scoped_ptr.hpp>
 #include <boost/shared_ptr.hpp>
+#include "Backdrop.h"
+#include "Units.h"
 
 class Sprite;
 class Graphics;
@@ -26,7 +29,8 @@ public:
 
 	static Map* createTestMap(Graphics& graphics);
 	std::vector<CollisionTile> getCollidingTiles(const Rectangle& rectangle) const;
-	void update(int elapsed_time_ms);
+	void update(units::MS elapsed_time_ms);
+	void drawBackground(Graphics& graphics) const;
 	void draw(Graphics& graphics) const;
 private:
 	struct Tile {
@@ -36,7 +40,8 @@ private:
 		TileType tile_type;
 		boost::shared_ptr<Sprite> sprite;
 	};
-
+	boost::scoped_ptr<Backdrop> backdrop_;
+	std::vector<std::vector<boost::shared_ptr<Sprite>>> background_tiles_;
 	std::vector<std::vector<Tile>> tiles_;
 };
 

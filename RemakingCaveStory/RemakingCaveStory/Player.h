@@ -5,6 +5,7 @@
 #include <boost/shared_ptr.hpp>
 #include <map>
 #include "Rectangle.h"
+#include "Units.h"
 
 class Sprite;
 class Graphics;
@@ -15,6 +16,7 @@ private:
 	enum MotionType {
 		FIRST_MOTION_TYPE,
 		STANDING = FIRST_MOTION_TYPE,
+		INTERACTING,
 		WALKING,
 		JUMPING,
 		FALLING,
@@ -50,19 +52,6 @@ private:
 
 	friend bool operator<(const SpriteState& a, const SpriteState& b);
 
-	struct Jump {
-	public:
-		Jump() : time_remaining_ms_(0), active_(false) {}
-		void update(int elapsed_time_ms);
-		void reset();
-		void reactivate() { active_ = time_remaining_ms_ > 0; }
-		void deactivate() { active_ = false; }
-		bool active() const { return active_;  }
-	private:
-		int time_remaining_ms_;
-		bool active_;
-	};
-
 	void initializeSprites(Graphics& graphics);
 	void initializeSprite(Graphics& graphics, const SpriteState& sprite);
 	SpriteState getSpriteState();
@@ -72,23 +61,24 @@ private:
 	Rectangle topCollision(int delta) const;
 	Rectangle bottomCollision(int delta) const;
 
-	void updateX(int elapsed_time_ms, const Map& map);
-	void updateY(int elapsed_time_ms, const Map& map);
+	void updateX(units::MS elapsed_time_ms, const Map& map);
+	void updateY(units::MS elapsed_time_ms, const Map& map);
 
 	bool on_ground() const { return on_ground_; }
 	std::map<SpriteState, boost::shared_ptr<Sprite>> sprites_;
 	int x_;
 	int y_;
-	float velocity_x_;
+	units::Velocity velocity_x_;
 	float velocity_y_;
-	float acceleration_x_;
+	int acceleration_x_;
 	HorizontalFacing horizontal_facing_;
 	VerticalFacing vertical_facing_;
 	bool on_ground_;
-	Jump jump_;
+	bool jump_active_;
+	bool interacting_;
 public:
 	Player(Graphics& graphics, int x, int y);
-	void update(int elapsed_time_ms, const Map& map);
+	void update(units::MS elapsed_time_ms, const Map& map);
 	void draw(Graphics& graphics);
 
 	void startMovingLeft();

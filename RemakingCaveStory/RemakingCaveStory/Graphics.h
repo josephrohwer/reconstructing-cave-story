@@ -21,7 +21,7 @@ public:
 	Graphics();
 	~Graphics();
 	typedef SDL_Texture* SurfaceID;
-	SurfaceID loadImage(const std::string& file_name, bool black_is_transparent);
+	SurfaceID loadImage(const std::string& file_name, bool black_is_transparent = false);
 	void clear();
 	void renderCopy(SurfaceID source,
 		SDL_Rect* source_rectangle,

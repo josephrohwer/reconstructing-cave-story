@@ -8,11 +8,13 @@
 
 // An anonymous namespace. Can only be accessed within this file.
 namespace {
-	const int kFps = 60;
+	const units::FPS kFps = 60;
 }
 
 // STATIC : ONLY ONE COPY OF THIS IS EVER MADE, NO MATTER HOW MANY OBJECTS ARE CREATED.
 int Game::kTileSize = 32;
+int Game::kScreenWidth = 20 * Game::kTileSize;
+int Game::kScreenHeight = 15 * Game::kTileSize;
 
 Game::Game() {
 	SDL_Init(SDL_INIT_EVERYTHING); // Initialize the SDL library. This must be called before using most other SDL functions.
@@ -27,20 +29,22 @@ void Game::eventLoop() {
 	Graphics graphics; // Creates the window, renderer.
 	Input input; // Key events.
 	SDL_Event event; // A union that contains structures for the different event types.
-	player_.reset(new Player(graphics, 320, 240)); // Resets what player_ is pointing to, copy-and-swap.
+	player_.reset(new Player(graphics, (kScreenWidth / 2), (kScreenHeight / 2))); // Resets what player_ is pointing to, copy-and-swap.
 	map_.reset(Map::createTestMap(graphics));
-	int last_update_time = SDL_GetTicks();
+	units::MS last_update_time = SDL_GetTicks();
 	
 	// This loop runs however many times kFps is set to per second. In this case 60 times per second.
 	bool running = true;
 	while (running) {
-		const int start_time_ms = SDL_GetTicks(); // SDL_GetTicks - get the number of milliseconds since the SDL library initialization.
+		const units::MS start_time_ms = SDL_GetTicks(); // SDL_GetTicks - get the number of milliseconds since the SDL library initialization.
 		input.beginNewFrame(); // Clears pressed and released keys from the map.
 		// HANDLE INPUT.
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 			case SDL_KEYDOWN:
-				input.keyDownEvent(event);
+				if (event.key.repeat == 0) { // Prevents being able to hold a key to repeat an action (such as jumping).
+					input.keyDownEvent(event);
+				}
 				break;
 			case SDL_KEYUP:
 				input.keyUpEvent(event);
@@ -90,15 +94,15 @@ void Game::eventLoop() {
 			player_->stopJump();
 		}
 
-		const int current_time_ms = SDL_GetTicks();
+		const units::MS current_time_ms = SDL_GetTicks();
 		update(current_time_ms - last_update_time);
 		last_update_time = current_time_ms;
 		
 		draw(graphics);
 		
 		// This is all to make sure the loop is running at the correct FPS.
-		const int ms_per_frame = (1000/*ms*/ / kFps);
-		const int elapsed_time_ms = SDL_GetTicks() - start_time_ms;
+		const units::MS ms_per_frame = (1000/*ms*/ / kFps);
+		const units::MS elapsed_time_ms = SDL_GetTicks() - start_time_ms;
 		if (elapsed_time_ms < ms_per_frame) {
 			SDL_Delay(ms_per_frame - elapsed_time_ms); // Wait a specified number of milliseconds before returning.
 		}
@@ -112,7 +116,7 @@ void Game::eventLoop() {
 }
 
 // Move the player, move projecticles, and check collisions.
-void Game::update(int elapsed_time_ms) {
+void Game::update(units::MS elapsed_time_ms) {
 	player_->update(elapsed_time_ms, *map_);
 	map_->update(elapsed_time_ms);
 }
@@ -120,6 +124,7 @@ void Game::update(int elapsed_time_ms) {
 // Draw everything to the screen.
 void Game::draw(Graphics& graphics) {
 	graphics.clear();
+	map_->drawBackground(graphics);
 	player_->draw(graphics);
 	map_->draw(graphics);
 	graphics.flip();
