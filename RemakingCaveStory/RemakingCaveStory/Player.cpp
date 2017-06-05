@@ -253,7 +253,7 @@ Rectangle Player::bottomCollision(int delta) const {
 }
 
 void Player::updateX(int elapsed_time_ms, const Map& map) {
-	x_ += (int)round((velocity_x_ * elapsed_time_ms));
+	// Update Velocity
 	velocity_x_ += (acceleration_x_ * elapsed_time_ms);
 
 	if (acceleration_x_ < 0.0f) {
@@ -264,6 +264,47 @@ void Player::updateX(int elapsed_time_ms, const Map& map) {
 	}
 	else if (on_ground()) {
 		velocity_x_ *= kSlowdownFactor;
+	}
+
+	// Calculate delta
+	const int delta = (int)round((velocity_x_ * elapsed_time_ms));
+	if (delta > 0) {
+		// Check collision in direction of delta.
+		CollisionInfo info = getWallCollisionInfo(map, rightCollision(delta));
+		// React to collision
+		if (info.collided) {
+			x_ = (info.col * Game::kTileSize) - kCollisionX.right();
+			velocity_x_ = 0.0f;
+		}
+		else {
+			x_ += delta;
+		}
+
+		// Check collision in other direction.
+		info = getWallCollisionInfo(map, leftCollision(0));
+		// React to collision
+		if (info.collided) {
+			x_ = (info.col * Game::kTileSize) + kCollisionX.right();
+		}
+	}
+	else {
+		// Check collision in direction of delta.
+		CollisionInfo info = getWallCollisionInfo(map, leftCollision(delta));
+		// React to collision
+		if (info.collided) {
+			x_ = (info.col * Game::kTileSize) + kCollisionX.right();
+			velocity_x_ = 0.0f;
+		}
+		else {
+			x_ += delta;
+		}
+
+		// Check collision in other direction.
+		info = getWallCollisionInfo(map, rightCollision(0));
+		// React to collision
+		if (info.collided) {
+			x_ = (info.col * Game::kTileSize) - kCollisionX.right();
+		}
 	}
 }
 
@@ -293,6 +334,27 @@ void Player::updateY(int elapsed_time_ms, const Map& map) {
 		// React to collision
 		if (info.collided) {
 			y_ = (info.row * Game::kTileSize) + kCollisionY.height();
+		}
+	}
+	else {
+		// Check collision in direction of delta.
+		CollisionInfo info = getWallCollisionInfo(map, topCollision(delta));
+		// React to collision
+		if (info.collided) {
+			y_ = (info.row * Game::kTileSize) + kCollisionY.height();
+			velocity_y_ = 0.0f;
+		}
+		else {
+			y_ += delta;
+			on_ground_ = false;
+		}
+
+		// Check collision in other direction.
+		info = getWallCollisionInfo(map, bottomCollision(0));
+		// React to collision
+		if (info.collided) {
+			y_ = (info.row * Game::kTileSize) - kCollisionY.bottom();
+			on_ground_ = true;
 		}
 	}
 }
