@@ -6,9 +6,11 @@ Graphics::Graphics() {
 	window_ = SDL_CreateWindow("Cave Story",
 		SDL_WINDOWPOS_UNDEFINED,
 		SDL_WINDOWPOS_UNDEFINED,
-		Game::kScreenWidth, Game::kScreenHeight, SDL_WINDOW_RESIZABLE);
+		units::tileToPixel(Game::kScreenWidth), 
+		units::tileToPixel(Game::kScreenHeight), 
+		SDL_WINDOW_RESIZABLE);
 	renderer_ = SDL_CreateRenderer(window_, -1, 0);
-	SDL_RenderSetLogicalSize(renderer_, Game::kScreenWidth, Game::kScreenHeight);
+	SDL_RenderSetLogicalSize(renderer_, units::tileToPixel(Game::kScreenWidth), units::tileToPixel(Game::kScreenHeight));
 	SDL_ShowCursor(SDL_DISABLE);
 }
 

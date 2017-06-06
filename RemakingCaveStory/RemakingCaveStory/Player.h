@@ -56,20 +56,20 @@ private:
 	void initializeSprite(Graphics& graphics, const SpriteState& sprite);
 	SpriteState getSpriteState();
 
-	Rectangle leftCollision(int delta) const;
-	Rectangle rightCollision(int delta) const;
-	Rectangle topCollision(int delta) const;
-	Rectangle bottomCollision(int delta) const;
+	Rectangle leftCollision(units::Game delta) const;
+	Rectangle rightCollision(units::Game delta) const;
+	Rectangle topCollision(units::Game delta) const;
+	Rectangle bottomCollision(units::Game delta) const;
 
 	void updateX(units::MS elapsed_time_ms, const Map& map);
 	void updateY(units::MS elapsed_time_ms, const Map& map);
 
 	bool on_ground() const { return on_ground_; }
 	std::map<SpriteState, boost::shared_ptr<Sprite>> sprites_;
-	int x_;
-	int y_;
+	units::Game x_;
+	units::Game y_;
 	units::Velocity velocity_x_;
-	float velocity_y_;
+	units::Velocity velocity_y_;
 	int acceleration_x_;
 	HorizontalFacing horizontal_facing_;
 	VerticalFacing vertical_facing_;
@@ -77,7 +77,7 @@ private:
 	bool jump_active_;
 	bool interacting_;
 public:
-	Player(Graphics& graphics, int x, int y);
+	Player(Graphics& graphics, units::Game x, units::Game y);
 	void update(units::MS elapsed_time_ms, const Map& map);
 	void draw(Graphics& graphics);
 

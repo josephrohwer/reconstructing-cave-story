@@ -9,12 +9,12 @@
 // An anonymous namespace. Can only be accessed within this file.
 namespace {
 	const units::FPS kFps = 60;
+	const units::MS kMaxFrameTime = 5 * 1000 / 60;
 }
 
 // STATIC : ONLY ONE COPY OF THIS IS EVER MADE, NO MATTER HOW MANY OBJECTS ARE CREATED.
-int Game::kTileSize = 32;
-int Game::kScreenWidth = 20 * Game::kTileSize;
-int Game::kScreenHeight = 15 * Game::kTileSize;
+units::Tile Game::kScreenWidth = 20;
+units::Tile Game::kScreenHeight = 15;
 
 Game::Game() {
 	SDL_Init(SDL_INIT_EVERYTHING); // Initialize the SDL library. This must be called before using most other SDL functions.
@@ -29,7 +29,8 @@ void Game::eventLoop() {
 	Graphics graphics; // Creates the window, renderer.
 	Input input; // Key events.
 	SDL_Event event; // A union that contains structures for the different event types.
-	player_.reset(new Player(graphics, (kScreenWidth / 2), (kScreenHeight / 2))); // Resets what player_ is pointing to, copy-and-swap.
+	player_.reset(new Player(graphics, units::tileToGame((kScreenWidth / 2)), 
+		units::tileToGame((kScreenHeight / 2)))); // Resets what player_ is pointing to, copy-and-swap.
 	map_.reset(Map::createTestMap(graphics));
 	units::MS last_update_time = SDL_GetTicks();
 	
@@ -95,7 +96,8 @@ void Game::eventLoop() {
 		}
 
 		const units::MS current_time_ms = SDL_GetTicks();
-		update(current_time_ms - last_update_time);
+		const units::MS elapsed_time = current_time_ms - last_update_time;
+		update(std::min(elapsed_time, kMaxFrameTime));
 		last_update_time = current_time_ms;
 		
 		draw(graphics);

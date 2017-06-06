@@ -151,6 +151,7 @@
     <ClCompile Include="Map.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="tinyxml2.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AnimatedSprite.h" />
@@ -162,6 +163,7 @@
     <ClInclude Include="Player.h" />
     <ClInclude Include="Rectangle.h" />
     <ClInclude Include="Sprite.h" />
+    <ClInclude Include="tinyxml2.h" />
     <ClInclude Include="Units.h" />
   </ItemGroup>
   <ItemGroup>
