@@ -1,19 +1,37 @@
-#pragma once
 #ifndef PLAYER_H_
 #define PLAYER_H_
 
 #include <boost/shared_ptr.hpp>
 #include <map>
 #include "Rectangle.h"
+#include "Audio.h"
 #include "Units.h"
 
 class Sprite;
 class Graphics;
 class Map;
 
-class Player {
+class Player
+{
+public:
+	Player(Graphics& graphics, units::Game x, units::Game y);
+
+	void update(units::MS elapsed_time, const Map& map);
+	void draw(Graphics& graphics);
+
+	void startMovingLeft();
+	void startMovingRight();
+	void stopMoving();
+
+	void lookUp();
+	void lookDown();
+	void lookHorizontal();
+
+	void startJump(Mix_Chunk* jump_sound);
+	void stopJump();
 private:
-	enum MotionType {
+	enum MotionType
+	{
 		FIRST_MOTION_TYPE,
 		STANDING = FIRST_MOTION_TYPE,
 		INTERACTING,
@@ -23,14 +41,16 @@ private:
 		LAST_MOTION_TYPE
 	};
 
-	enum HorizontalFacing {
+	enum HorizontalFacing
+	{
 		FIRST_HORIZONTAL_FACING,
 		LEFT = FIRST_HORIZONTAL_FACING,
 		RIGHT,
 		LAST_HORIZONTAL_FACING
 	};
 
-	enum VerticalFacing {
+	enum VerticalFacing
+	{
 		FIRST_VERTICAL_FACING,
 		UP = FIRST_VERTICAL_FACING,
 		DOWN,
@@ -38,12 +58,14 @@ private:
 		LAST_VERTICAL_FACING
 	};
 
-	struct SpriteState {
+	struct SpriteState
+	{
 		SpriteState(MotionType motion_type = STANDING,
-			HorizontalFacing horizontal_facing = LEFT,
-			VerticalFacing vertical_facing = HORIZONTAL) :
-			motion_type(motion_type), 
-			horizontal_facing(horizontal_facing), vertical_facing(vertical_facing) {}
+					HorizontalFacing horizontal_facing = LEFT,
+					VerticalFacing vertical_facing = HORIZONTAL) :
+					motion_type(motion_type), 
+					horizontal_facing(horizontal_facing), 
+					vertical_facing(vertical_facing) {}
 		
 		MotionType motion_type;
 		HorizontalFacing horizontal_facing;
@@ -65,32 +87,20 @@ private:
 	void updateY(units::MS elapsed_time_ms, const Map& map);
 
 	bool on_ground() const { return on_ground_; }
+
 	std::map<SpriteState, boost::shared_ptr<Sprite>> sprites_;
+
 	units::Game x_;
 	units::Game y_;
 	units::Velocity velocity_x_;
 	units::Velocity velocity_y_;
-	int acceleration_x_;
+	units::Acceleration acceleration_x_;
+	
 	HorizontalFacing horizontal_facing_;
 	VerticalFacing vertical_facing_;
 	bool on_ground_;
 	bool jump_active_;
 	bool interacting_;
-public:
-	Player(Graphics& graphics, units::Game x, units::Game y);
-	void update(units::MS elapsed_time_ms, const Map& map);
-	void draw(Graphics& graphics);
-
-	void startMovingLeft();
-	void startMovingRight();
-	void stopMoving();
-
-	void lookUp();
-	void lookDown();
-	void lookHorizontal();
-
-	void startJump();
-	void stopJump();
 };
 
 #endif // !PLAYER_H_

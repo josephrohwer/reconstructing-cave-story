@@ -1,13 +1,16 @@
-#pragma once
 #ifndef RECTANGLE_H_
 #define RECTANGLE_H_
 
 #include "Units.h"
 
-class Rectangle {
+class Rectangle
+{
 public: 
-	Rectangle(units::Game x, units::Game y, units::Game width, units::Game height) :
-		x_(x), y_(y), width_(width), height_(height) {}
+	Rectangle(units::Game x, units::Game y, 
+		      units::Game width, units::Game height) :
+			  x_(x), y_(y), 
+			  width_(width), height_(height) {}
+
 	units::Game left() const { return x_; }
 	units::Game right() const { return x_ + width_; }
 	units::Game top() const { return y_; }

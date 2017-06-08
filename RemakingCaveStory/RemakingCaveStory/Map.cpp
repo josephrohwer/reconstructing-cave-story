@@ -10,7 +10,8 @@ using std::vector;
 // TODO: Implement map loading.
 
 // STATIC
-Map* Map::createTestMap(Graphics& graphics) {
+Map* Map::createTestMap(Graphics& graphics)
+{
 	Map* map = new Map();
 
 	map->backdrop_.reset(new FixedBackdrop("bkBlue", graphics));
@@ -26,14 +27,16 @@ Map* Map::createTestMap(Graphics& graphics) {
 
 	const units::Tile floor = 14;
 	const units::Tile ceiling = 0;
-	for (units::Tile col = 0; col < num_cols; col++) {
+	for (units::Tile col = 0; col < num_cols; col++)
+	{
 		map->tiles_[floor][col] = tile;
 		map->tiles_[ceiling][col] = tile;
 	}
 
 	const units::Tile leftWall = 0;
 	const units::Tile rightWall = 19;
-	for (units::Tile row = 0; row < floor; row++) {
+	for (units::Tile row = 0; row < floor; row++)
+	{
 		map->tiles_[row][leftWall] = tile;
 		map->tiles_[row][rightWall] = tile;
 	}
@@ -66,46 +69,63 @@ Map* Map::createTestMap(Graphics& graphics) {
 	return map;
 }
 
-vector<Map::CollisionTile> Map::getCollidingTiles(const Rectangle& rectangle) const {
+vector<Map::CollisionTile> Map::getCollidingTiles(const Rectangle& rectangle) const 
+{
 	const units::Tile first_row = units::gameToTile(rectangle.top());
 	const units::Tile last_row = units::gameToTile(rectangle.bottom());
 	const units::Tile first_col = units::gameToTile(rectangle.left());
 	const units::Tile last_col = units::gameToTile(rectangle.right());
 	
 	vector<CollisionTile> collision_tiles;
-	for (units::Tile row = first_row; row <= last_row; row++) {
-		for (units::Tile col = first_col; col <= last_col; col++) {
+	for (units::Tile row = first_row; row <= last_row; row++) 
+	{
+		for (units::Tile col = first_col; col <= last_col; col++) 
+		{
 			collision_tiles.push_back(CollisionTile(row, col, tiles_[row][col].tile_type));
 		}
 	}
+
 	return collision_tiles;
 }
 
-void Map::update(units::MS elapsed_time_ms) {
-	for (size_t row = 0; row < tiles_.size(); row++) {
-		for (size_t col = 0; col < tiles_[row].size(); col++) {
-			if (tiles_[row][col].sprite) {
+void Map::update(units::MS elapsed_time_ms)
+{
+	for (size_t row = 0; row < tiles_.size(); row++) 
+	{
+		for (size_t col = 0; col < tiles_[row].size(); col++)
+		{
+			if (tiles_[row][col].sprite)
+			{
 				tiles_[row][col].sprite->update(elapsed_time_ms);
 			}
 		}
 	}
 }
 
-void Map::drawBackground(Graphics& graphics) const {
+void Map::drawBackground(Graphics& graphics) const 
+{
 	backdrop_->draw(graphics);
-	for (size_t row = 0; row < background_tiles_.size(); row++) {
-		for (size_t col = 0; col < background_tiles_[row].size(); col++) {
-			if (background_tiles_[row][col]) {
+
+	for (size_t row = 0; row < background_tiles_.size(); row++) 
+	{
+		for (size_t col = 0; col < background_tiles_[row].size(); col++) 
+		{
+			if (background_tiles_[row][col])
+			{
 				background_tiles_[row][col]->draw(graphics, units::tileToGame(col), units::tileToGame(row));
 			}
 		}
 	}
 }
 
-void Map::draw(Graphics& graphics) const {
-	for (size_t row = 0; row < tiles_.size(); row++) {
-		for (size_t col = 0; col < tiles_[row].size(); col++) {
-			if (tiles_[row][col].sprite) {
+void Map::draw(Graphics& graphics) const 
+{
+	for (size_t row = 0; row < tiles_.size(); row++) 
+	{
+		for (size_t col = 0; col < tiles_[row].size(); col++)
+		{
+			if (tiles_[row][col].sprite) 
+			{
 				tiles_[row][col].sprite->draw(graphics, units::tileToGame(col), units::tileToGame(row));
 			}
 		}

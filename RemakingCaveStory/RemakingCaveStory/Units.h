@@ -1,10 +1,10 @@
-#pragma once
 #ifndef UNITS_H_
 #define UNITS_H_
 
 #include <cmath>
 
-namespace units {
+namespace units
+{
 	typedef float Game; // Float for extra precision. Intrisic units of position.
 	typedef int Pixel; // Integer for discrete units. Pixel values can be positive or negative.
 	typedef unsigned int Tile; // Also discrete, but non-negative.
@@ -16,24 +16,29 @@ namespace units {
 	typedef float Velocity; // Game / MS
 	typedef float Acceleration; // Game / MS / MS
 
-	namespace {
+	namespace
+	{
 		const Game kTileSize = 32.0f;
 	}
 
-	inline Pixel gameToPixel(Game game) {
+	inline Pixel gameToPixel(Game game)
+	{
 		// TODO: Stop assuming 32x32.
-		return Pixel(round(game)); // Divde game by 2 to make game 16x16.
+		return Pixel(round(game)); // Divde game by 2 to make game 16x16 instead of 32x32.
 	}
 
-	inline Tile gameToTile(Game game) {
+	inline Tile gameToTile(Game game)
+	{
 		return Tile(game / kTileSize);
 	}
 
-	inline Game tileToGame(Tile tile) {
+	inline Game tileToGame(Tile tile)
+	{
 		return (tile * kTileSize);
 	}
 
-	inline Pixel tileToPixel(Tile tile) {
+	inline Pixel tileToPixel(Tile tile)
+	{
 		return gameToPixel(tileToGame(tile));
 	}
 }
