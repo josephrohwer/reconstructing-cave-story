@@ -16,6 +16,9 @@
 # Sprite files
 *.bmp
 
+# Audio files
+*.wav
+
 # Notes
 *.txt
 
@@ -56,6 +59,8 @@
 *.opensdf
 *.sdf
 *.VC.opendb
+*.vcxproj.filters
+*.vcxproj
 
 # Precompiled Assets
 SourceArt/**/*.png
