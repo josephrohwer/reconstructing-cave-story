@@ -29,6 +29,12 @@ public:
 
 	void startJump(Mix_Chunk* jump_sound);
 	void stopJump();
+
+	void takeDamage(Mix_Chunk* bat_sound);
+
+	Rectangle damageRectangle() const;
+
+	units::Game center_x() const { return x_ + (units::tileToGame(1) / 2.0f); }
 private:
 	enum MotionType
 	{
@@ -100,6 +106,10 @@ private:
 	VerticalFacing vertical_facing_;
 	bool on_ground_;
 	bool jump_active_;
+
+	units::MS invincible_time_;
+	bool invincible_;
+
 	bool interacting_;
 };
 

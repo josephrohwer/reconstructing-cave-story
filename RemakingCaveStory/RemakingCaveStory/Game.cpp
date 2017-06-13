@@ -3,6 +3,7 @@
 #include "Graphics.h"
 #include "Audio.h"
 #include "Player.h"
+#include "Bat.h"
 #include "Input.h"
 #include "AnimatedSprite.h"
 #include "Map.h"
@@ -49,6 +50,10 @@ void Game::eventLoop()
 	player_.reset(new Player(graphics,
 							 units::tileToGame((kScreenWidth / 2)), 
 							 units::tileToGame((kScreenHeight / 2))));
+
+	bat_.reset(new Bat(graphics,
+					   units::tileToGame(5),
+					   units::tileToGame((kScreenHeight / 2))));
 
 	map_.reset(Map::createTestMap(graphics));
 
@@ -143,6 +148,11 @@ void Game::eventLoop()
 
 		// Move the player, move projecticles, and check collisions.
 		update(std::min(elapsed_time, kMaxFrameTime));
+		
+		if (bat_->damageRectangle().collidesWith(player_->damageRectangle()))
+		{
+			player_->takeDamage(audio.hit_sound_);
+		}
 
 		last_update_time = current_time;
 		
@@ -163,8 +173,9 @@ void Game::eventLoop()
 
 void Game::update(units::MS elapsed_time)
 {
+	//map_->update(elapsed_time);
 	player_->update(elapsed_time, *map_);
-	map_->update(elapsed_time);
+	bat_->update(elapsed_time, player_->center_x());
 }
 
 void Game::draw(Graphics& graphics)
@@ -172,6 +183,7 @@ void Game::draw(Graphics& graphics)
 	graphics.clear();
 
 	map_->drawBackground(graphics);
+	bat_->draw(graphics);
 	player_->draw(graphics);
 	map_->draw(graphics);
 
