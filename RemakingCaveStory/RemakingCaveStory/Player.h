@@ -2,7 +2,9 @@
 #define PLAYER_H_
 
 #include <boost/shared_ptr.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <map>
+#include "NumberSprite.h"
 #include "Rectangle.h"
 #include "Audio.h"
 #include "Units.h"
@@ -18,6 +20,7 @@ public:
 
 	void update(units::MS elapsed_time, const Map& map);
 	void draw(Graphics& graphics);
+	void drawHUD(Graphics& graphics) const;
 
 	void startMovingLeft();
 	void startMovingRight();
@@ -34,7 +37,7 @@ public:
 
 	Rectangle damageRectangle() const;
 
-	units::Game center_x() const { return x_ + (units::tileToGame(1) / 2.0f); }
+	units::Game center_x() const { return x_ + units::kHalfTile; }
 private:
 	enum MotionType
 	{
@@ -92,9 +95,14 @@ private:
 	void updateX(units::MS elapsed_time_ms, const Map& map);
 	void updateY(units::MS elapsed_time_ms, const Map& map);
 
+	bool spriteIsVisible() const;
+
 	bool on_ground() const { return on_ground_; }
 
 	std::map<SpriteState, boost::shared_ptr<Sprite>> sprites_;
+	boost::scoped_ptr<Sprite> health_bar_sprite_;
+	boost::scoped_ptr<Sprite> health_fill_sprite_;
+	boost::scoped_ptr<NumberSprite> health_number_sprite_;
 
 	units::Game x_;
 	units::Game y_;
@@ -106,11 +114,10 @@ private:
 	VerticalFacing vertical_facing_;
 	bool on_ground_;
 	bool jump_active_;
+	bool interacting_;
 
 	units::MS invincible_time_;
 	bool invincible_;
-
-	bool interacting_;
 };
 
 #endif // !PLAYER_H_

@@ -49,6 +49,8 @@ namespace units
 	{
 		return gameToPixel(tileToGame(tile));
 	}
+
+	const units::Game kHalfTile = (tileToGame(1) / 2.0f);
 }
 
 #endif // !UNITS_H_

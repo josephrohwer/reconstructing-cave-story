@@ -50,6 +50,24 @@ namespace
 	const units::MS kInvincibleFlashTime = 50;
 	const units::MS kInvincibleTime = 2000;
 
+	// HUD
+	const units::Game kHealthBarX = units::tileToGame(2);
+	const units::Game kHealthBarY = units::tileToGame(2);
+	const units::Game kHealthBarSourceX = 0;
+	const units::Game kHealthBarSourceY = (5 * units::kHalfTile);
+	const units::Tile kHealthBarSourceWidth = 4;
+	const units::Game kHealthBarSourceHeight = units::kHalfTile;
+
+	const units::Game kHealthFillX = (7 * units::kHalfTile);
+	const units::Game kHealthFillY = units::tileToGame(2);
+	const units::Game kHealthFillSourceX = 0;
+	const units::Game kHealthFillSourceY = (3 * units::kHalfTile);
+	const units::Game kHealthFillSourceHeight = units::kHalfTile;
+
+	const units::Game kHealthNumberX = (units::tileToGame(5) / 2);
+	const units::Game kHealthNumberY = units::tileToGame(2);
+	const int kHealthNumberNumDigits = 2;
+
 	struct CollisionInfo
 	{
 		bool collided;
@@ -122,8 +140,10 @@ void Player::update(units::MS elapsed_time, const Map& map)
 
 void Player::draw(Graphics& graphics) 
 {
-	if (invincible_ && (invincible_time_ / kInvincibleFlashTime) % 2 == 0) return;
-	sprites_[getSpriteState()]->draw(graphics, x_, y_);
+	if (spriteIsVisible()) 
+	{
+		sprites_[getSpriteState()]->draw(graphics, x_, y_);
+	}
 }
 
 void Player::startMovingLeft() 
@@ -131,6 +151,17 @@ void Player::startMovingLeft()
 	acceleration_x_ = -1;
 	horizontal_facing_ = LEFT;
 	interacting_ = false;
+}
+
+
+void Player::drawHUD(Graphics& graphics) const 
+{
+	if (spriteIsVisible())
+	{
+		health_bar_sprite_->draw(graphics, kHealthBarX, kHealthBarY);
+		health_fill_sprite_->draw(graphics, kHealthFillX, kHealthFillY);
+		health_number_sprite_->draw(graphics, kHealthNumberX, kHealthNumberY);
+	}
 }
 
 void Player::startMovingRight()
@@ -200,6 +231,22 @@ Rectangle Player::damageRectangle() const
 
 void Player::initializeSprites(Graphics& graphics) 
 {
+	health_bar_sprite_.reset(new Sprite(graphics, 
+										"TextBox", 
+										units::gameToPixel(kHealthBarSourceX), 
+										units::gameToPixel(kHealthBarSourceY), 
+										units::tileToPixel(kHealthBarSourceWidth), 
+										units::gameToPixel(kHealthBarSourceHeight)));
+
+	health_fill_sprite_.reset(new Sprite(graphics,
+										 "TextBox",
+										 units::gameToPixel(kHealthFillSourceX),
+										 units::gameToPixel(kHealthFillSourceY),
+										 units::gameToPixel((5 * units::kHalfTile) - 2.0f),
+										 units::gameToPixel(kHealthBarSourceHeight)));
+	
+	health_number_sprite_.reset(new NumberSprite(graphics, 26, kHealthNumberNumDigits));
+
 	for (int m_type = FIRST_MOTION_TYPE; m_type < LAST_MOTION_TYPE; m_type++) 
 	{
 		for (int h_facing = FIRST_HORIZONTAL_FACING; h_facing < LAST_HORIZONTAL_FACING; h_facing++)
@@ -465,4 +512,9 @@ void Player::updateY(units::MS elapsed_time_ms, const Map& map)
 			on_ground_ = true;
 		}
 	}
+}
+
+bool Player::spriteIsVisible() const
+{
+	return !(invincible_ && (invincible_time_ / kInvincibleFlashTime) % 2 == 0);
 }
