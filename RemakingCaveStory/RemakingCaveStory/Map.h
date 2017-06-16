@@ -35,6 +35,7 @@ public:
 	void update(units::MS elapsed_time_ms);
 
 	void drawBackground(Graphics& graphics) const;
+	void drawForeground(Graphics& graphics) const;
 	void draw(Graphics& graphics) const;
 
 	static Map* createTestMap(Graphics& graphics);
@@ -51,6 +52,7 @@ private:
 
 	boost::scoped_ptr<Backdrop> backdrop_;
 	std::vector<std::vector<boost::shared_ptr<Sprite>>> background_tiles_;
+	std::vector<std::vector<boost::shared_ptr<Sprite>>> foreground_tiles_;
 	std::vector<std::vector<Tile>> tiles_;
 };
 

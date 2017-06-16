@@ -5,6 +5,8 @@
 
 namespace units
 {
+	typedef int HP; // Discrete.
+
 	typedef float Game; // Float for extra precision. Intrisic units of position.
 	typedef int Pixel; // Integer for discrete units. Pixel values can be positive or negative.
 	typedef unsigned int Tile; // Also discrete, but non-negative.

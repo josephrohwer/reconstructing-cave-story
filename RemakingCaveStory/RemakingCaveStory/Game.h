@@ -7,6 +7,7 @@
 
 class Player;
 class Bat;
+class Lava;
 class Graphics;
 class Map;
 
@@ -24,6 +25,9 @@ private:
 	void draw(Graphics& graphics);
 	boost::scoped_ptr<Player> player_;
 	boost::scoped_ptr<Bat> bat_;
+	boost::scoped_ptr<Lava> lava_;
+	boost::scoped_ptr<Bat> bat2_;
+	boost::scoped_ptr<Bat> bat3_;
 	boost::scoped_ptr<Map> map_;
 };
 

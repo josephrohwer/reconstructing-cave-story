@@ -8,8 +8,10 @@
 #include "Rectangle.h"
 #include "Audio.h"
 #include "Units.h"
+#include "Timer.h"
+#include "Sprite.h"
+#include "VaryingWidthSprite.h"
 
-class Sprite;
 class Graphics;
 class Map;
 
@@ -20,7 +22,7 @@ public:
 
 	void update(units::MS elapsed_time, const Map& map);
 	void draw(Graphics& graphics);
-	void drawHUD(Graphics& graphics) const;
+	void drawHUD(Graphics& graphics);
 
 	void startMovingLeft();
 	void startMovingRight();
@@ -33,7 +35,8 @@ public:
 	void startJump(Mix_Chunk* jump_sound);
 	void stopJump();
 
-	void takeDamage(Mix_Chunk* bat_sound);
+	void takeDamageFromBat(Mix_Chunk* damage_sound);
+	void takeDamageFromLava(Mix_Chunk* damage_sound);
 
 	Rectangle damageRectangle() const;
 
@@ -83,6 +86,25 @@ private:
 
 	friend bool operator<(const SpriteState& a, const SpriteState& b);
 
+	struct Health 
+	{
+	public:
+		Health(Graphics& graphics);
+		void update(units::MS elapsed_time);
+		void draw(Graphics& graphics);
+		bool takeDamage(units::HP damage);
+	private:
+		units::Game fillOffset(units::HP health) const;
+		
+		units::HP damage_;
+		Timer damage_timer_;
+		units::HP max_health_;
+		units::HP current_health_;
+		Sprite health_bar_sprite_;
+		VaryingWidthSprite health_fill_sprite_;
+		VaryingWidthSprite damage_fill_sprite_;
+	};
+
 	void initializeSprites(Graphics& graphics);
 	void initializeSprite(Graphics& graphics, const SpriteState& sprite);
 	SpriteState getSpriteState();
@@ -100,9 +122,6 @@ private:
 	bool on_ground() const { return on_ground_; }
 
 	std::map<SpriteState, boost::shared_ptr<Sprite>> sprites_;
-	boost::scoped_ptr<Sprite> health_bar_sprite_;
-	boost::scoped_ptr<Sprite> health_fill_sprite_;
-	boost::scoped_ptr<NumberSprite> health_number_sprite_;
 
 	units::Game x_;
 	units::Game y_;
@@ -116,8 +135,8 @@ private:
 	bool jump_active_;
 	bool interacting_;
 
-	units::MS invincible_time_;
-	bool invincible_;
+	Health health_;
+	Timer invincible_timer_;
 };
 
 #endif // !PLAYER_H_

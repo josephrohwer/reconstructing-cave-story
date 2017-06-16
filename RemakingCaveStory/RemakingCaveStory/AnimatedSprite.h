@@ -3,6 +3,7 @@
 
 #include "Sprite.h"
 #include "Units.h"
+#include "Timer.h"
 
 class AnimatedSprite : public Sprite
 {
@@ -15,10 +16,9 @@ public:
 
 	void update(units::MS elapsed_time);
 private:
-	const units::MS frame_time_;
+	Timer frame_timer_;
 	const units::Frame num_frames_;
 	units::Frame current_frame_;
-	units::MS elapsed_time_;
 };
 
 #endif // !ANIMATEDSPRITE_H_

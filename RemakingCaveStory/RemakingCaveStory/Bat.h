@@ -12,7 +12,7 @@ class Sprite;
 
 class Bat {
 public:
-	Bat(Graphics& graphics, units::Game x, units::Game y);
+	Bat(Graphics& graphics, bool startFlyingUp, units::Game x, units::Game y);
 	void update(units::MS elapsed_time, units::Game player_x);
 	void draw(Graphics& graphics) const;
 
@@ -45,6 +45,7 @@ private:
 	units::Game x_;
 	units::Game y_;
 	units::Degrees flight_angle_;
+	bool startFlyingUp_;
 	Facing facing_;
 	std::map<SpriteState, boost::shared_ptr<Sprite>> sprites_;
 };

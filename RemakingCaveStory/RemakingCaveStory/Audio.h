@@ -10,7 +10,7 @@ public:
 
 	Mix_Music *main_music_;
 	Mix_Chunk *jump_sound_;
-	Mix_Chunk *hit_sound_;
+	Mix_Chunk *damage_sound_;
 	Mix_Chunk *bat_sound_;
 private:
 };

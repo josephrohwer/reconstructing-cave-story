@@ -3,11 +3,9 @@
 #include <string>
 #include "Player.h"
 #include "Graphics.h"
-#include "Sprite.h"
 #include "AnimatedSprite.h"
 #include "Game.h"
 #include "Map.h"
-#include "Rectangle.h"
 
 namespace 
 {
@@ -23,6 +21,7 @@ namespace
 	// JUMP MOTION
 	const units::Velocity kJumpSpeed = 0.25f;
 	const units::Velocity kShortJumpSpeed = (kJumpSpeed / 1.5f);
+	const units::Velocity kHighJumpSpeed = (kJumpSpeed / .5f);
 	const units::Acceleration kAirAcceleration = 0.0003125f;
 	const units::Acceleration kJumpGravity = 0.0003125f;
 
@@ -49,24 +48,6 @@ namespace
 
 	const units::MS kInvincibleFlashTime = 50;
 	const units::MS kInvincibleTime = 2000;
-
-	// HUD
-	const units::Game kHealthBarX = units::tileToGame(2);
-	const units::Game kHealthBarY = units::tileToGame(2);
-	const units::Game kHealthBarSourceX = 0;
-	const units::Game kHealthBarSourceY = (5 * units::kHalfTile);
-	const units::Tile kHealthBarSourceWidth = 4;
-	const units::Game kHealthBarSourceHeight = units::kHalfTile;
-
-	const units::Game kHealthFillX = (7 * units::kHalfTile);
-	const units::Game kHealthFillY = units::tileToGame(2);
-	const units::Game kHealthFillSourceX = 0;
-	const units::Game kHealthFillSourceY = (3 * units::kHalfTile);
-	const units::Game kHealthFillSourceHeight = units::kHalfTile;
-
-	const units::Game kHealthNumberX = (units::tileToGame(5) / 2);
-	const units::Game kHealthNumberY = units::tileToGame(2);
-	const int kHealthNumberNumDigits = 2;
 
 	struct CollisionInfo
 	{
@@ -114,12 +95,12 @@ Player::Player(Graphics& graphics,
 			   velocity_x_(0.0f), velocity_y_(0.0f),
 			   acceleration_x_(0),
 			   x_(x), y_(y),
-			   horizontal_facing_(LEFT), vertical_facing_(HORIZONTAL),
+			   horizontal_facing_(RIGHT), vertical_facing_(HORIZONTAL),
 			   on_ground_(false),
 			   jump_active_(false),
 			   interacting_(false),
-			   invincible_time_(0),
-			   invincible_(false)
+			   health_(graphics),
+			   invincible_timer_(kInvincibleTime)
 {
 	initializeSprites(graphics);
 }
@@ -128,11 +109,7 @@ void Player::update(units::MS elapsed_time, const Map& map)
 {
 	sprites_[getSpriteState()]->update(elapsed_time);
 
-	if (invincible_)
-	{
-		invincible_time_ += elapsed_time;
-		invincible_ = invincible_time_ < kInvincibleTime;
-	}
+	health_.update(elapsed_time);
 
 	updateX(elapsed_time, map);
 	updateY(elapsed_time, map);
@@ -154,13 +131,11 @@ void Player::startMovingLeft()
 }
 
 
-void Player::drawHUD(Graphics& graphics) const 
+void Player::drawHUD(Graphics& graphics) 
 {
 	if (spriteIsVisible())
 	{
-		health_bar_sprite_->draw(graphics, kHealthBarX, kHealthBarY);
-		health_fill_sprite_->draw(graphics, kHealthFillX, kHealthFillY);
-		health_number_sprite_->draw(graphics, kHealthNumberX, kHealthNumberY);
+		health_.draw(graphics);
 	}
 }
 
@@ -210,14 +185,26 @@ void Player::stopJump()
 	jump_active_ = false;
 }
 
-void Player::takeDamage(Mix_Chunk* bat_sound)
+// TODO: Make take damage consider multiple enemy types.
+void Player::takeDamageFromBat(Mix_Chunk* damage_sound)
 {
-	if (!invincible_)
+	if (!invincible_timer_.active())
 	{
-		Mix_PlayChannel(-1, bat_sound, 0);
+		health_.takeDamage(1);
+		Mix_PlayChannel(-1, damage_sound, 0);
 		velocity_y_ = std::min(velocity_y_, -kShortJumpSpeed);
-		invincible_ = true;
-		invincible_time_ = 0;
+		invincible_timer_.reset();
+	}
+}
+
+void Player::takeDamageFromLava(Mix_Chunk* damage_sound)
+{
+	if (!invincible_timer_.active())
+	{
+		health_.takeDamage(2);
+		Mix_PlayChannel(-1, damage_sound, 0);
+		velocity_y_ = std::min(velocity_y_, -kHighJumpSpeed);
+		invincible_timer_.reset();
 	}
 }
 
@@ -231,21 +218,7 @@ Rectangle Player::damageRectangle() const
 
 void Player::initializeSprites(Graphics& graphics) 
 {
-	health_bar_sprite_.reset(new Sprite(graphics, 
-										"TextBox", 
-										units::gameToPixel(kHealthBarSourceX), 
-										units::gameToPixel(kHealthBarSourceY), 
-										units::tileToPixel(kHealthBarSourceWidth), 
-										units::gameToPixel(kHealthBarSourceHeight)));
-
-	health_fill_sprite_.reset(new Sprite(graphics,
-										 "TextBox",
-										 units::gameToPixel(kHealthFillSourceX),
-										 units::gameToPixel(kHealthFillSourceY),
-										 units::gameToPixel((5 * units::kHalfTile) - 2.0f),
-										 units::gameToPixel(kHealthBarSourceHeight)));
-	
-	health_number_sprite_.reset(new NumberSprite(graphics, 26, kHealthNumberNumDigits));
+	//health_number_sprite_.reset(new NumberSprite(graphics, 26, kHealthNumberNumDigits));
 
 	for (int m_type = FIRST_MOTION_TYPE; m_type < LAST_MOTION_TYPE; m_type++) 
 	{
@@ -516,5 +489,5 @@ void Player::updateY(units::MS elapsed_time_ms, const Map& map)
 
 bool Player::spriteIsVisible() const
 {
-	return !(invincible_ && (invincible_time_ / kInvincibleFlashTime) % 2 == 0);
+	return !(invincible_timer_.active() && (invincible_timer_.currentTime() / kInvincibleFlashTime) % 2 == 0);
 }

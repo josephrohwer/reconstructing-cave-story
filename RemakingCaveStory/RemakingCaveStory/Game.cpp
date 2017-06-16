@@ -4,9 +4,11 @@
 #include "Audio.h"
 #include "Player.h"
 #include "Bat.h"
+#include "Lava.h"
 #include "Input.h"
 #include "AnimatedSprite.h"
 #include "Map.h"
+#include "Timer.h"
 
 // An anonymous namespace. Can only be accessed within this file.
 namespace
@@ -48,12 +50,24 @@ void Game::eventLoop()
 	
 	// Resets what player_ is pointing to, copy-and-swap.
 	player_.reset(new Player(graphics,
-							 units::tileToGame((kScreenWidth / 2)), 
+							 units::tileToGame(2), 
 							 units::tileToGame((kScreenHeight / 2))));
 
-	bat_.reset(new Bat(graphics,
+	bat_.reset(new Bat(graphics, true,
 					   units::tileToGame(5),
 					   units::tileToGame((kScreenHeight / 2))));
+
+	bat2_.reset(new Bat(graphics, false,
+		units::tileToGame(11),
+		units::tileToGame((kScreenHeight / 2 - 1))));
+
+	bat3_.reset(new Bat(graphics, true,
+		units::tileToGame(16),
+		units::tileToGame((kScreenHeight / 2 - 4))));
+
+	lava_.reset(new Lava(graphics,
+		units::tileToGame(1),
+		units::tileToGame(12)));
 
 	map_.reset(Map::createTestMap(graphics));
 
@@ -149,9 +163,15 @@ void Game::eventLoop()
 		// Move the player, move projecticles, and check collisions.
 		update(std::min(elapsed_time, kMaxFrameTime));
 		
-		if (bat_->damageRectangle().collidesWith(player_->damageRectangle()))
+		if (bat_->damageRectangle().collidesWith(player_->damageRectangle())
+			|| bat2_->damageRectangle().collidesWith(player_->damageRectangle())
+			|| bat3_->damageRectangle().collidesWith(player_->damageRectangle()))
 		{
-			player_->takeDamage(audio.hit_sound_);
+			player_->takeDamageFromBat(audio.damage_sound_);
+		}
+		else if (lava_->damageRectangle().collidesWith(player_->damageRectangle()))
+		{
+			player_->takeDamageFromLava(audio.damage_sound_);
 		}
 
 		last_update_time = current_time;
@@ -173,9 +193,13 @@ void Game::eventLoop()
 
 void Game::update(units::MS elapsed_time)
 {
+	Timer::updateAll(elapsed_time);
 	//map_->update(elapsed_time);
 	player_->update(elapsed_time, *map_);
 	bat_->update(elapsed_time, player_->center_x());
+	bat2_->update(elapsed_time, player_->center_x());
+	bat3_->update(elapsed_time, player_->center_x());
+	//lava_->update(elapsed_time);
 }
 
 void Game::draw(Graphics& graphics)
@@ -184,7 +208,11 @@ void Game::draw(Graphics& graphics)
 
 	map_->drawBackground(graphics);
 	bat_->draw(graphics);
+	bat2_->draw(graphics);
+	bat3_->draw(graphics);
+	lava_->draw(graphics);
 	player_->draw(graphics);
+	map_->drawForeground(graphics);
 	map_->draw(graphics);
 	player_->drawHUD(graphics);
 

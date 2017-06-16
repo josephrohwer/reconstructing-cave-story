@@ -5,18 +5,19 @@
 
 namespace {
 	const units::Frame kNumFlyFrames = 3;
-	const units::FPS kFlyFps = 13;
+	const units::FPS kFlyFps = 15;
 	
 	const units::AngularVelocity kAngularVelocity = (120.0f / 1000.0f);
 
-	const units::Game kFlightAmplitude = (units::kHalfTile * 5);
+	const units::Game kFlightAmplitude = (units::kHalfTile * 4);
 }
 
-Bat::Bat(Graphics& graphics, units::Game x, units::Game y) : 
+Bat::Bat(Graphics& graphics, bool startFlyingUp, units::Game x, units::Game y) :
 	center_y_(y),
 	x_(x), 
 	y_(y),
 	facing_(RIGHT),
+	startFlyingUp_(startFlyingUp),
 	flight_angle_(0.0f)
 {
 	initializeSprites(graphics);
@@ -28,8 +29,14 @@ void Bat::update(units::MS elapsed_time, units::Game player_x)
 
 	facing_ = (x_ + units::kHalfTile > player_x) ? LEFT : RIGHT;
 
-	y_ = center_y_ + (kFlightAmplitude * (units::Game)std::sin(units::degreesToRadians(flight_angle_)));
-
+	if (startFlyingUp_)
+	{
+		y_ = center_y_ - (kFlightAmplitude * (units::Game)std::sin(units::degreesToRadians(flight_angle_)));
+	}
+	else
+	{
+		y_ = center_y_ + (kFlightAmplitude * (units::Game)std::sin(units::degreesToRadians(flight_angle_)));
+	}
 	sprites_[getSpriteState()]->update(elapsed_time);
 }
 
