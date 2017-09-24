@@ -68,6 +68,12 @@
 SourceArt/**/*.png
 SourceArt/**/*.tga
 
+# UE Starter Content
+StarterContent/*
+
+# Saved
+Saved/*
+
 # Binary Files
 Binaries/*
 
