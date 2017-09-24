@@ -74,7 +74,7 @@ SourceArt/**/*.tga
 */DerivedDataCache
 */Intermediate
 */Saved
-BuildingEscape/Content/StarterContent/
+*/StarterContent/
 
 # Don't ignore icon files in Build
 !Build/**/*.ico
